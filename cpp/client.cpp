@@ -1,6 +1,7 @@
 #include <iostream>
 #include <functional> // bind
 #include <array>
+#include <vector>
 #include <algorithm>//merge
 
 #define ASIO_STANDALONE
@@ -37,41 +38,40 @@ int main(){
 
     udp::socket socket(io_context, udp::endpoint(udp::v4(), 12345));
 
+
+    std::vector<char> recv_output;
+
     for (;;)
     {
-      std::array<char, MAX_DGRAM> recv_buf;
+      //std::array<char, MAX_DGRAM> recv_buf;
+      std::vector<char> recv_buf(MAX_DGRAM);
       udp::endpoint remote_endpoint;
       size_t ret = socket.receive_from(asio::buffer(recv_buf), remote_endpoint);
-      int idx = (int)recv_buf[0];
+
+      int idx = (int)recv_buf.at(0);
       size_t size=0;
-      
        
+      //std::cout<<(int)recv_buf.at(0)<<std::endl;
+      std::cout<<"==="<<frame_idx++<< "==="<<ret<<"==="<<std::endl;
+
       // concat
       if(idx > 1){
-      
+      recv_output.insert( recv_output.end(),recv_buf.begin(), recv_buf.begin() + ret -1 );
 
-      
       // concat + display
       }else{
+      recv_output.insert( recv_output.end(),recv_buf.begin(), recv_buf.begin() + ret -1 );
+      std::cout<<"Concat : "<<recv_output.size()<<std::endl;
 
-        //reset output array
+      /* Do Something*/
+
+      //reset output array
+      recv_output.clear();
+      //std::cout<<"Clear : "<<recv_output.size()<<std::endl;
       }
 
-      //std::string message = make_daytime_string();
-      std::cout<<"==="<<frame_idx++<< "==="<<ret<<"==="<<std::endl;
-      /*
-      for(auto item : recv_buf)
-        std::cout<<(int)item<<" ";
-      std::cout<<"-----------"<<std::endl;
-      */
-
-      std::cout<<(int)recv_buf[0]<<std::endl;
       
-      /*
-      for(auto item : recv_buf)
-        std::cout<<item;
-      std::cout<<"-----------"<<std::endl;
-      */
+
 
       //asio::error_code ignored_error;
       //socket.send_to(asio::buffer(message),
