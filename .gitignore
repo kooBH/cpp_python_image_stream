@@ -13,3 +13,12 @@ _deps
 
 # python
 __pycache__/
+
+# large
+lib/
+
+# output
+build/
+
+# temp
+*.swp
