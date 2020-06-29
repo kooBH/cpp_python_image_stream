@@ -7,6 +7,10 @@
 #define ASIO_STANDALONE
 #include <asio.hpp>
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+
 using asio::ip::udp;
 
 template<typename T, int N>
@@ -56,14 +60,39 @@ int main(){
 
       // concat
       if(idx > 1){
-      recv_output.insert( recv_output.end(),recv_buf.begin(), recv_buf.begin() + ret -1 );
+      recv_output.insert( recv_output.end(),recv_buf.begin()+1, recv_buf.begin() + ret );
 
       // concat + display
       }else{
-      recv_output.insert( recv_output.end(),recv_buf.begin(), recv_buf.begin() + ret -1 );
+      recv_output.insert( recv_output.end(),recv_buf.begin()+1, recv_buf.begin() + ret );
       std::cout<<"Concat : "<<recv_output.size()<<std::endl;
 
-      /* Do Something*/
+      /*  Convert to Opencv Mat */
+
+      /*
+      CV_LOAD_IMAGE_ANYDEPTH - If set, return 16-bit/32-bit image when the input has the corresponding depth, otherwise convert it to 8-bit.
+      CV_LOAD_IMAGE_COLOR - If set, always convert image to the color one
+      CV_LOAD_IMAGE_GRAYSCALE - If set, always convert image to the grayscale one
+      >0 Return a 3-channel color image.
+      Note In the current implementation the alpha channel, if any, is stripped from the output image. Use negative value if you need the alpha channel.
+      =0 Return a grayscale image.
+    <0 Return the loaded image as is (with alpha channel).
+       */
+      cv::Mat image = cv::imdecode(recv_output,-1 );
+      std::cout<<image.size()<<std::endl;
+
+      /* Display */
+      if(!image.empty())
+        cv::imshow( "display", image );
+      else
+        std::cout<<"image empty"<<std::endl;
+
+      int k = cv::waitKey(5);
+      if(k == 27)
+      {
+        cv::destroyAllWindows();
+        break;
+      }
 
       //reset output array
       recv_output.clear();

@@ -8,14 +8,19 @@ set(LINKLIBS)
 
 list(APPEND INCL
   lib/asio/include
+  /usr/local/include/opencv4
   )
 
 list(APPEND SRC
-
+  client.cpp 
  )
 
 list(APPEND LINKLIBS
   pthread
+  ${PROJECT_SOURCE_DIR}/lib/opencv4/libopencv_core.so.4.3.0
+  ${PROJECT_SOURCE_DIR}/lib/opencv4/libopencv_highgui.so.4.3.0
+  ${PROJECT_SOURCE_DIR}/lib/opencv4/libopencv_imgcodecs.so.4.3.0
+
  )
 
 list(APPEND COMPILE_OPTION
@@ -23,7 +28,7 @@ list(APPEND COMPILE_OPTION
   -std=c++14
   )
 
-add_executable(${PROJECT_NAME} client.cpp ${SRC})
+add_executable(${PROJECT_NAME} ${SRC})
 
 target_include_directories(${PROJECT_NAME}	PRIVATE	${INCL}  )
 target_link_libraries(${PROJECT_NAME} ${LINKLIBS})
